@@ -26,10 +26,18 @@ The dataset is categorized into 7 classes of skin cancer:
 6.  **Vascular lesions** (vasc)
 7.  **Dermatofibroma** (df)
 
+   
 *insert a chart showing the class distribution here.*
 ``
 
 ---
+
+## Dataset Link 💾
+
+The dataset used for this project is the **HAM10000 ("Human Against Machine with 10000 training images")** dataset, which is publicly available on Kaggle.
+
+* **Dataset:** [Skin Cancer MNIST: HAM10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)
+
 
 ## Methodology ⚙️
 
