@@ -3,6 +3,8 @@
 
 This project focuses on building a **Convolutional Neural Network (CNN)** to classify different types of skin cancer lesions from dermatoscopic images. The model aims to distinguish between 7 different classes of skin lesions, leveraging the power of deep learning to aid in visual diagnosis.
 
+![CNN Process](images/skin_cancer_process.png)
+
 ## Overview 📝
 
 Skin cancer is the most common form of human malignancy. Its diagnosis is primarily visual, starting with a clinical screening and potentially followed by dermoscopic analysis and biopsy. Automating the classification of skin lesions is a challenging task due to the subtle, fine-grained variations in their appearance.
