@@ -1,4 +1,4 @@
-
+<img width="317" height="282" alt="image" src="https://github.com/user-attachments/assets/5c69ab40-7578-47f1-a190-cf67611aa8fb" />
 # CNN for Skin Cancer Detection 🩺
 
 This project focuses on building a **Convolutional Neural Network (CNN)** to classify different types of skin cancer lesions from dermatoscopic images. The model aims to distinguish between 7 different classes of skin lesions, leveraging the power of deep learning to aid in visual diagnosis.
@@ -27,7 +27,7 @@ The dataset is categorized into 7 classes of skin cancer:
 7.  **Dermatofibroma** (df)
 
    
-*insert a chart showing the class distribution here.*
+![Class Distribution](images/class_lesion.png)
 ``
 
 ---
@@ -58,7 +58,8 @@ I've followed a systematic 14-step process to build, train, and evaluate the ski
 **Step 5: Exploratory Data Analysis (EDA)**
 * Visualizing the data distribution across different classes and features like age, sex, and lesion location.
 
-*EDA plots here.*
+![EDA1](images/class_lesion.png)
+![EDA2](images/class_lesion.png)
 ``
 ``
 
@@ -95,7 +96,8 @@ I've followed a systematic 14-step process to build, train, and evaluate the ski
 
 This section showcases the performance of the trained model on the test dataset.
 
-*You can insert plots of the model's training history here.*
+![model1](images/class_lesion.png)
+![model2](images/class_lesion.png)
 ``
 ``
 
@@ -103,14 +105,14 @@ This section showcases the performance of the trained model on the test dataset.
 
 The confusion matrix provides a detailed look at the model's classification performance for each of the 7 classes.
 
-*You can insert your confusion matrix image here.*
+![confusion Matrix](images/class_lesion.png)
+
+![output1](images/class_lesion.png)
 ``
 
 ### Final Accuracy
 
-* **Training Accuracy:** `[Insert Training Accuracy Here]`
-* **Validation Accuracy:** `[Insert Validation Accuracy Here]`
-* **Test Accuracy:** `[Insert Test Accuracy Here]`
+* **Test Accuracy:** `75.68%`
 
 ---
 
