@@ -120,3 +120,24 @@ The confusion matrix provides a detailed look at the model's classification perf
 
 * **Programming Language:** Python
 * **Libraries:** TensorFlow, Keras, Scikit-learn, Pandas, NumPy, Matplotlib, Seaborn
+
+
+
+## Future Plans 🚀
+
+While the current model provides a solid foundation, there are several exciting avenues for future development to enhance its accuracy, usability, and real-world impact.
+
+### Mobile Application Development
+
+* **Build a Cross-Platform App:** Develop a mobile application for both iOS and Android. This app would allow users to either upload an image from their gallery or use their phone's camera to capture a new image of a skin lesion and receive a classification result in real-time.
+* **User-Friendly Interface (UI/UX):** Design an intuitive interface that guides the user on how to take high-quality, well-lit photos, as image quality is crucial for accurate predictions. The app would provide instant feedback and a probability score for each lesion type.
+
+### Model Enhancement & Performance
+
+* **Transfer Learning:** Implement more advanced, pre-trained architectures like **ResNet50, VGG16, or EfficientNet**. These models have been trained on millions of diverse images (ImageNet dataset) and can act as powerful feature extractors, which could significantly boost classification accuracy.
+* **Advanced Data Augmentation:** Expand on data augmentation techniques to create a more robust model. This includes applying more transformations like shearing, elastic distortions, and brightness adjustments to simulate a wider range of real-world image conditions.
+* **Hyperparameter Tuning:** Use automated tools like KerasTuner or Optuna to systematically search for the optimal combination of hyperparameters (e.g., learning rate, number of layers, filter sizes, dropout rates) to squeeze out the best possible performance.
+
+### Advanced Features & Usability
+
+* **API and Cloud Deployment:** Deploy the final trained model on a cloud service (like AWS, Google Cloud, or Azure) and serve it through a REST API. This would make the model scalable, reliable, and accessible for both the mobile app and potentially other third-party integrations.
