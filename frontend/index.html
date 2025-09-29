@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Lesion Scanner</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Simple spinner animation */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans">
+
+    <div class="w-full max-w-md p-6 mx-auto bg-white rounded-2xl shadow-lg text-center">
+
+        <!-- Initial View -->
+        <div id="initial-view">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Skin Lesion Scanner</h1>
+            <p class="text-sm text-gray-600 mb-4">AI-Powered Educational Tool</p>
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6 text-left">
+                <p class="font-bold">Important Medical Disclaimer</p>
+                <p class="text-sm">This is an educational tool, not a substitute for professional medical advice. Always consult a qualified dermatologist for any diagnosis.</p>
+            </div>
+            <button id="start-scan-btn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+                I Understand & Agree to Scan
+            </button>
+        </div>
+
+        <!-- Camera View -->
+        <div id="camera-view" class="hidden">
+            <h2 class="text-xl font-semibold mb-4">Position Lesion in Frame</h2>
+            <div class="relative w-full aspect-square bg-black rounded-lg overflow-hidden">
+                <video id="video-feed" class="w-full h-full object-cover" autoplay playsinline></video>
+            </div>
+            <button id="capture-btn" class="mt-6 w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition">
+                Capture Photo
+            </button>
+             <button id="cancel-scan-btn" class="mt-2 w-full bg-gray-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-600 transition">
+                Cancel
+            </button>
+        </div>
+        
+        <!-- Preview View -->
+        <div id="preview-view" class="hidden">
+            <h2 class="text-xl font-semibold mb-4">Confirm Photo</h2>
+            <img id="image-preview" class="rounded-lg w-full aspect-square object-cover" alt="Captured lesion image">
+            <div class="flex gap-4 mt-6">
+                <button id="retake-btn" class="w-full bg-gray-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-600 transition">Retake</button>
+                <button id="analyze-btn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition">Analyze</button>
+            </div>
+        </div>
+
+        <!-- Loading View -->
+        <div id="loading-view" class="hidden">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">Analyzing...</h2>
+            <div class="flex justify-center items-center h-48">
+                <div class="loader"></div>
+            </div>
+            <p class="text-sm text-gray-500">Please wait while the AI processes the image.</p>
+        </div>
+
+        <!-- Result View -->
+        <div id="result-view" class="hidden">
+             <h2 class="text-xl font-semibold mb-4">Prediction Result</h2>
+             <div id="result-card" class="p-6 rounded-lg mb-6">
+                <p class="text-sm text-gray-600">Predicted Lesion Type:</p>
+                <p id="prediction-class" class="text-2xl font-bold"></p>
+                <p class="text-sm text-gray-600 mt-4">Confidence:</p>
+                <p id="prediction-confidence" class="text-2xl font-bold"></p>
+             </div>
+             <p class="text-xs text-red-600 font-semibold mb-6">Reminder: This is not a medical diagnosis. Consult a doctor.</p>
+             <button id="scan-another-btn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition">Scan Another</button>
+        </div>
+    </div>
+    
+    <!-- JavaScript Logic -->
+    <script>
+        // --- DOM Elements ---
+        const views = document.querySelectorAll('[id$="-view"]');
+        const startBtn = document.getElementById('start-scan-btn');
+        const cancelBtn = document.getElementById('cancel-scan-btn');
+        const video = document.getElementById('video-feed');
+        const captureBtn = document.getElementById('capture-btn');
+        const previewImg = document.getElementById('image-preview');
+        const retakeBtn = document.getElementById('retake-btn');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const scanAnotherBtn = document.getElementById('scan-another-btn');
+
+        const predictionClassEl = document.getElementById('prediction-class');
+        const predictionConfidenceEl = document.getElementById('prediction-confidence');
+        const resultCard = document.getElementById('result-card');
+        
+        const API_URL = 'http://127.0.0.1:8000/predict';
+        let imageBlob = null;
+        let videoStream = null;
+
+        // --- View Management ---
+        function showView(viewId) {
+            views.forEach(view => view.classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        // --- Camera Logic ---
+        async function startCamera() {
+            try {
+                const constraints = { video: { facingMode: 'environment' } };
+                videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = videoStream;
+                showView('camera-view');
+            } catch (err) {
+                console.error("Camera Error:", err);
+                alert("Could not access the camera. Please ensure you have given permission and are using a secure (https) connection.");
+                showView('initial-view');
+            }
+        }
+
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+        }
+
+        // --- Image Capture & Prediction ---
+        function capturePhoto() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            canvas.toBlob(blob => {
+                imageBlob = blob;
+                previewImg.src = URL.createObjectURL(blob);
+                stopCamera();
+                showView('preview-view');
+            }, 'image/jpeg');
+        }
+
+        async function getPrediction() {
+            if (!imageBlob) return;
+
+            showView('loading-view');
+            
+            const formData = new FormData();
+            formData.append('file', imageBlob, 'lesion.jpg');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                displayResult(result);
+
+            } catch (error) {
+                console.error('Prediction API Error:', error);
+                alert('Could not get prediction. Please ensure the backend server is running and accessible.');
+                showView('preview-view'); // Go back to preview on error
+            }
+        }
+
+        function displayResult(result) {
+            const confidencePercent = (result.confidence * 100).toFixed(2);
+            predictionClassEl.textContent = result.predicted_class;
+            predictionConfidenceEl.textContent = `${confidencePercent}%`;
+
+            // Style result card based on confidence (example)
+            if (result.confidence > 0.85 && result.predicted_class.toLowerCase().includes('melanoma')) {
+                resultCard.className = 'p-6 rounded-lg mb-6 bg-red-100 text-red-800';
+            } else if (result.confidence > 0.70) {
+                 resultCard.className = 'p-6 rounded-lg mb-6 bg-yellow-100 text-yellow-800';
+            } else {
+                 resultCard.className = 'p-6 rounded-lg mb-6 bg-green-100 text-green-800';
+            }
+            
+            showView('result-view');
+        }
+
+        // --- Event Listeners ---
+        startBtn.addEventListener('click', startCamera);
+        cancelBtn.addEventListener('click', () => {
+            stopCamera();
+            showView('initial-view');
+        });
+        captureBtn.addEventListener('click', capturePhoto);
+        retakeBtn.addEventListener('click', startCamera);
+        analyzeBtn.addEventListener('click', getPrediction);
+        scanAnotherBtn.addEventListener('click', () => showView('initial-view'));
+
+        // --- Initial State ---
+        showView('initial-view');
+    </script>
+</body>
+</html>
