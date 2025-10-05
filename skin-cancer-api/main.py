@@ -13,8 +13,7 @@ origins = [
     "http://localhost:5500", # Common for local development
     "http://127.0.0.1:5500", # Common for local development
     "null",                  # Sometimes needed for local file:// access
-    # Add the URL of your deployed frontend app here once you have it
-    # e.g., "https://your-awesome-app.netlify.app", 
+    "https://fluffy-cassata-1d9589.netlify.app"
 ]
 
 # Add the CORS middleware to the FastAPI application
